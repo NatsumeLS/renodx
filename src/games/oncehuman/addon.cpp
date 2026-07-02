@@ -5,7 +5,7 @@
  * API: DirectX 11 & DirectX 12
  *
  * Details:
- * - Upgrades the 8-bit swapchain to fp16.
+ * - Upgrades the swapchain output to scRGB (fp16) for SDR and HDR10 (R10G10B10A2) for HDR.
  * - Replaces the game's baked SDR tonemap/LUT output with RenoDX tonemapping.
  * - A single binary serves both APIs: sm5 (DXBC) for D3D11, sm6 (DXIL) for D3D12.
  *
@@ -186,7 +186,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Color Grading",
         .max = 100.f,
         .parse = [](float value) { return value * 0.02f; },
-    },
+        .is_visible = []() { return current_settings_mode >= 1; },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeSaturation",
         .binding = &shader_injection.tone_map_saturation,
@@ -195,7 +195,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Color Grading",
         .max = 100.f,
         .parse = [](float value) { return value * 0.02f; },
-    },
+        .is_visible = []() { return current_settings_mode >= 1; },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeHighlightSaturation",
         .binding = &shader_injection.tone_map_highlight_saturation,
