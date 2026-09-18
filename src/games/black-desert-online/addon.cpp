@@ -44,6 +44,8 @@ renodx::mods::shader::CustomShaders custom_shaders = {
     CustomShaderEntry(0x26DCB4FA), //UI character ring 
     CustomShaderEntry(0x0B7A12D4), //worldmap-mesh
     CustomShaderEntry(0x093735FF), //worldmap-objects
+    CustomShaderEntry(0x9C692A63), //worldmap-objects-nodepth
+    CustomShaderEntry(0xA80F6455), //worldmap-far-terrain
     CustomShaderEntry(0x2A11AA38), //jj abrams flare 3 
     CustomShaderEntry(0x22B06586), //jj abrams flare 
     CustomShaderEntry(0x08D59DB4), //jj abrams flare 2 
