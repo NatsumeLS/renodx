@@ -26,7 +26,7 @@ namespace {
 
 renodx::mods::shader::CustomShaders custom_shaders = {
     CustomShaderEntry(0xB1A89110), //tonemap 
-    CustomShaderEntry(0x62E8C0F7), //tonemap2 
+    CustomShaderEntry(0x27677C0C), //tonemap2
     CustomShaderEntry(0x71288314), //output 
     CustomShaderEntry(0x7154F21B), //TAA 
     CustomShaderEntry(0xDF367C52), //HDR Setting
