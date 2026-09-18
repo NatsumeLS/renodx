@@ -1,24 +1,25 @@
 #include "../shared.h"
 
-// ---- Created with 3Dmigoto v1.4.1 on Mon Oct 27 22:32:17 2025
+// ---- Created with 3Dmigoto v1.3.16 on Fri Sep 18 20:34:59 2026
+// Ported from WorldmapObjects_0xAE85CEB1: only the territory color array grew to 100 entries.
 
 cbuffer _Globals : register(b0)
 {
   float4x4 matFroxelViewProj : packoffset(c0);
   float4x4 matFarCloudShadowProjectionTexScale : packoffset(c4);
   float fTextureSampleBias : packoffset(c8) = {0};
-  float4 vecTerritoryColor[64] : packoffset(c9);
-  float4 vecScaleTranslate : packoffset(c73);
-  float4x4 matShadowProjectionTexScale : packoffset(c74);
-  float fWaypointMapSectorX : packoffset(c78);
-  float fWaypointMapSectorZ : packoffset(c78.y);
-  float fWaypointMapSectorSizeX : packoffset(c78.z);
-  float fWaypointMapSectorSizeZ : packoffset(c78.w);
-  bool isNewSiegeMode : packoffset(c79);
-  int arrCycloneSize : packoffset(c79.y) = {0};
-  float4 arrCyclone[5] : packoffset(c80);
-  float2 shellCountFadeInfo : packoffset(c85);
-  bool g_isUseHeight : packoffset(c85.z);
+  float4 vecTerritoryColor[100] : packoffset(c9);
+  float4 vecScaleTranslate : packoffset(c109);
+  float4x4 matShadowProjectionTexScale : packoffset(c110);
+  float fWaypointMapSectorX : packoffset(c114);
+  float fWaypointMapSectorZ : packoffset(c114.y);
+  float fWaypointMapSectorSizeX : packoffset(c114.z);
+  float fWaypointMapSectorSizeZ : packoffset(c114.w);
+  bool isNewSiegeMode : packoffset(c115);
+  int arrCycloneSize : packoffset(c115.y) = {0};
+  float4 arrCyclone[5] : packoffset(c116);
+  float2 shellCountFadeInfo : packoffset(c121);
+  bool g_isUseHeight : packoffset(c121.z);
 }
 
 cbuffer outdoorScatteringConst : register(b2)
