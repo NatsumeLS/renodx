@@ -1,24 +1,26 @@
 #include "../shared.h"
 
-// ---- Created with 3Dmigoto v1.4.1 on Mon Oct 27 22:32:17 2025
+// ---- Created with 3Dmigoto v1.3.16 on Fri Sep 18 20:34:59 2026
+// Ported from WorldmapMesh_0xBF1C3AEB: territory colors grew to 100 entries,
+// texOceanTerritoryLayer was added at t11 and the ocean siege overlay block changed.
 
 cbuffer _Globals : register(b0)
 {
   float4x4 matFroxelViewProj : packoffset(c0);
   float4x4 matFarCloudShadowProjectionTexScale : packoffset(c4);
   float fTextureSampleBias : packoffset(c8) = {0};
-  float4 vecTerritoryColor[64] : packoffset(c9);
-  float4 vecScaleTranslate : packoffset(c73);
-  float4x4 matShadowProjectionTexScale : packoffset(c74);
-  float fWaypointMapSectorX : packoffset(c78);
-  float fWaypointMapSectorZ : packoffset(c78.y);
-  float fWaypointMapSectorSizeX : packoffset(c78.z);
-  float fWaypointMapSectorSizeZ : packoffset(c78.w);
-  bool isNewSiegeMode : packoffset(c79);
-  int arrCycloneSize : packoffset(c79.y) = {0};
-  float4 arrCyclone[5] : packoffset(c80);
-  float2 shellCountFadeInfo : packoffset(c85);
-  bool g_isUseHeight : packoffset(c85.z);
+  float4 vecTerritoryColor[100] : packoffset(c9);
+  float4 vecScaleTranslate : packoffset(c109);
+  float4x4 matShadowProjectionTexScale : packoffset(c110);
+  float fWaypointMapSectorX : packoffset(c114);
+  float fWaypointMapSectorZ : packoffset(c114.y);
+  float fWaypointMapSectorSizeX : packoffset(c114.z);
+  float fWaypointMapSectorSizeZ : packoffset(c114.w);
+  bool isNewSiegeMode : packoffset(c115);
+  int arrCycloneSize : packoffset(c115.y) = {0};
+  float4 arrCyclone[5] : packoffset(c116);
+  float2 shellCountFadeInfo : packoffset(c121);
+  bool g_isUseHeight : packoffset(c121.z);
 }
 
 cbuffer outdoorScatteringConst : register(b2)
@@ -170,11 +172,12 @@ Texture2D<float4> texFixedWaterLayer : register(t7);
 Texture2D<float4> texTerritoryLayer : register(t8);
 Texture2D<float4> texOccupyLayer : register(t9);
 Texture2D<float4> texRegionLayer : register(t10);
-Texture2D<float4> texOceanRegionLayer : register(t11);
-Texture2D<float4> texWaterFlow : register(t12);
-Texture2D<float4> texGreatSeaMap : register(t13);
-TextureCube<float4> texEnv : register(t14);
-Texture2D<float4> texFogTerrainMap : register(t15);
+Texture2D<float4> texOceanTerritoryLayer : register(t11);
+Texture2D<float4> texOceanRegionLayer : register(t12);
+Texture2D<float4> texWaterFlow : register(t13);
+Texture2D<float4> texGreatSeaMap : register(t14);
+TextureCube<float4> texEnv : register(t15);
+Texture2D<float4> texFogTerrainMap : register(t16);
 
 
 // 3Dmigoto declarations
@@ -288,7 +291,7 @@ void main(
     r8.x = texTerritoryLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r1.xz, 0).w;
     r8.yz = float2(255,3570) * r8.xx;
     r8.w = (int)r8.y;
-    r9.x = cmp((int)r6.x < 64);
+    r9.x = cmp((int)r6.x < 100);
     r10.xyz = r9.xxx ? vecTerritoryColor[r6.x].xyz : 0;
     r10.w = r9.x ? 0.650000 : 0;
     r9.xy = cmp(selectRegionKey != int2(255,255));
@@ -842,47 +845,63 @@ void main(
   r2.xyz = vecHorizon0ColorConst.xyz * r0.xxx;
   r2.xyz = saturate(r2.xyz * float3(0.200000003,0.200000003,0.200000003) + vecHorizon1ColorConst.xyz);
   r4.xyz = float3(1.25,1.25,1.25) * r2.xyz;
-  r0.y = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r7.xy, 0).w;
-  r0.yw = float2(255,9.99999975e-06) * r0.yw;
+  r0.y = texOceanTerritoryLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r7.xy, 0).w;
+  r0.y = 255 * r0.y;
   r0.y = (int)r0.y;
-  r0.z = selectOceanSiegeKey + (int)-r0.y;
-  r0.z = max((int)r0.z, (int)-r0.z);
+  r0.z = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r7.xy, 0).w;
+  r0.zw = float2(255,9.99999975e-06) * r0.zw;
   r0.z = (int)r0.z;
-  r0.z = cmp(r0.z < 1);
-  r0.z = r0.z ? 1.20000005 : 0.600000024;
-  r1.xz = cmp(selectOceanSiegeKey != int2(255,255));
-  r1.z = r1.z ? 0.600000024 : 1;
-  r0.z = r1.x ? r0.z : r1.z;
+  r0.y = cmp((int)r0.y != 255);
+  r1.x = selectOceanSiegeKey + (int)-r0.z;
+  r1.x = max((int)r1.x, (int)-r1.x);
+  r1.x = (int)r1.x;
+  r1.x = cmp(r1.x < 1);
+  r1.x = r1.x ? 1.20000005 : 0.600000024;
+  r5.y = cmp(selectOceanSiegeKey != 255);
+  r5.z = cmp(selectRegionKey != 255);
+  r1.z = r5.z ? 0.600000024 : 1;
+  r1.x = r5.y ? r1.x : r1.z;
   r6.xyzw = float4(-200,0,200,0) + v1.xzxz;
   r6.xyzw = r6.xyzw * float4(7.81249983e-05,7.81249983e-05,7.81249983e-05,7.81249983e-05) + -fixedTexCoord.zwzw;
   r6.xyzw = r6.xyzw + r1.yyyy;
   r6.xyzw = r6.xyzw / fixedTexCoord.xyxy;
   r7.x = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r6.xy, 0).w;
   r7.y = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r6.zw, 0).w;
-  r6.xyzw = float4(0,-200,0,200) + v1.xzxz;
-  r6.xyzw = r6.xyzw * float4(7.81249983e-05,7.81249983e-05,7.81249983e-05,7.81249983e-05) + -fixedTexCoord.zwzw;
-  r6.xyzw = r6.xyzw + r1.yyyy;
-  r6.xyzw = r6.xyzw / fixedTexCoord.xyxy;
-  r7.z = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r6.xy, 0).w;
-  r7.w = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r6.zw, 0).w;
-  r6.xyzw = float4(255,255,255,255) * r7.xyzw;
-  r1.x = cmp((int)r0.y == 255);
+  r8.xyzw = float4(0,-200,0,200) + v1.xzxz;
+  r8.xyzw = r8.xyzw * float4(7.81249983e-05,7.81249983e-05,7.81249983e-05,7.81249983e-05) + -fixedTexCoord.zwzw;
+  r8.xyzw = r8.xyzw + r1.yyyy;
+  r8.xyzw = r8.xyzw / fixedTexCoord.xyxy;
+  r7.z = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r8.xy, 0).w;
+  r7.w = texOceanRegionLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r8.zw, 0).w;
+  r7.xyzw = float4(255,255,255,255) * r7.xyzw;
+  r9.x = texOceanTerritoryLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r6.xy, 0).w;
+  r9.y = texOceanTerritoryLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r6.zw, 0).w;
+  r9.z = texOceanTerritoryLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r8.xy, 0).w;
+  r9.w = texOceanTerritoryLayer.SampleLevel(PA_POINT_WRAP_FILTER_s, r8.zw, 0).w;
+  r6.xyzw = float4(255,255,255,255) * r9.xyzw;
+  r1.y = cmp((int)r0.z == 255);
+  r7.xyzw = (int4)r7.xyzw;
+  r8.xyzw = cmp((int4)r7.xyzw != int4(255,255,255,255));
   r6.xyzw = (int4)r6.xyzw;
-  r7.xyzw = cmp((int4)r6.xyzw != int4(255,255,255,255));
-  r1.y = (int)r7.y | (int)r7.x;
-  r1.y = (int)r7.z | (int)r1.y;
-  r1.y = (int)r7.w | (int)r1.y;
-  r7.xyzw = (int4)r1.yyyy & int4(0x3f800000,0x3f79f9fa,0x3f0c8c8d,0x3f800000);
-  r6.xyzw = cmp((int4)r6.xyzw != (int4)r0.yyyy);
-  r0.y = (int)r6.y | (int)r6.x;
-  r0.y = (int)r6.z | (int)r0.y;
-  r0.y = (int)r6.w | (int)r0.y;
-  r6.xyz = r0.yyy ? float3(1,0.97647059,0.549019635) : vecTerritoryColor[1].xyz;
-  r6.w = r0.y ? 1 : 0.150000006;
-  r6.xyzw = r1.xxxx ? r7.xyzw : r6.xyzw;
-  r0.y = r6.w * r0.z;
-  r1.xyz = r6.xyz * r0.zzz + -r3.xyz;
-  r1.xyz = r0.yyy * r1.xyz + r3.xyz;
+  r9.xyzw = cmp((int4)r6.xyzw != int4(255,255,255,255));
+  r8.xyzw = r8.xyzw ? r9.xyzw : 0;
+  r1.z = (int)r8.y | (int)r8.x;
+  r1.z = (int)r8.z | (int)r1.z;
+  r1.z = (int)r8.w | (int)r1.z;
+  r8.xyzw = (int4)r1.zzzz & int4(0x3f800000,0x3f79f9fa,0x3f0c8c8d,0x3f800000);
+  r7.xyzw = cmp((int4)r7.xyzw != (int4)r0.zzzz);
+  r6.xyzw = cmp((int4)r6.xyzw == int4(255,255,255,255));
+  r6.xyzw = (int4)r6.xyzw | (int4)r7.xyzw;
+  r0.z = (int)r6.y | (int)r6.x;
+  r0.z = (int)r6.z | (int)r0.z;
+  r0.z = (int)r6.w | (int)r0.z;
+  r6.xyz = r0.zzz ? float3(1,0.97647059,0.549019635) : vecTerritoryColor[1].xyz;
+  r6.w = r0.z ? 1 : 0.150000006;
+  r6.xyzw = r1.yyyy ? r8.xyzw : r6.xyzw;
+  r0.z = r6.w * r1.x;
+  r1.xyz = r6.xyz * r1.xxx + -r3.xyz;
+  r1.xyz = r0.zzz * r1.xyz + r3.xyz;
+  r1.xyz = r0.yyy ? r1.xyz : r3.xyz;
   r1.xyz = isOceanSiege ? r1.xyz : r3.xyz;
   r0.y = r1.w * 0.100000001 + r5.x;
   r1.xyz = -r2.xyz * float3(1.25,1.25,1.25) + r1.xyz;
