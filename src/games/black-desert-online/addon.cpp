@@ -46,6 +46,7 @@ renodx::mods::shader::CustomShaders custom_shaders = {
     CustomShaderEntry(0x093735FF), //worldmap-objects
     CustomShaderEntry(0x9C692A63), //worldmap-objects-nodepth
     CustomShaderEntry(0xA80F6455), //worldmap-far-terrain
+    CustomShaderEntry(0x873C0540), //worldmap-dof
     CustomShaderEntry(0x2A11AA38), //jj abrams flare 3 
     CustomShaderEntry(0x22B06586), //jj abrams flare 
     CustomShaderEntry(0x08D59DB4), //jj abrams flare 2 
@@ -452,6 +453,15 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD fdw_reason, LPVOID lpv_reserved) {
         renodx::mods::swapchain::swap_chain_upgrade_targets.push_back({
           .old_format = reshade::api::format::r8g8b8a8_unorm,
           .new_format = reshade::api::format::r16g16b16a16_float,
+        });
+
+        // Half-res R8G8B8A8_UNORM render targets, world map depth-of-field source (texDof)
+        renodx::mods::swapchain::swap_chain_upgrade_targets.push_back({
+          .old_format = reshade::api::format::r8g8b8a8_unorm,
+          .new_format = reshade::api::format::r16g16b16a16_float,
+          .aspect_ratio = renodx::mods::swapchain::SwapChainUpgradeTarget::BACK_BUFFER,
+          .usage_include = reshade::api::resource_usage::render_target,
+          .usage_exclude = reshade::api::resource_usage::unordered_access,
         });
 
         // R8G8B8A8_TYPELESS
