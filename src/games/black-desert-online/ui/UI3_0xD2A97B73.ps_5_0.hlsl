@@ -151,7 +151,8 @@ void main(
   r1.xz = exp2(r1.xz);
   r0.y = -r1.x + r0.y;
   r0.y = r0.y + -r1.y;
-  o0.w = r0.y + -r1.z;
+  // Upgraded RT no longer clamps like UNORM, negative alpha made the blend go negative
+  o0.w = saturate(r0.y + -r1.z);
   o0.xyz = hdrDisplayDimmer * r0.xzw;
   return;
 }
