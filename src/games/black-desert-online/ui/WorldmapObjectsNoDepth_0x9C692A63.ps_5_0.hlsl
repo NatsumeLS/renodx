@@ -452,9 +452,6 @@ void main(
     r1.yzw = r3.xyz + r3.xyz;
     r3.xyz = r0.xxx * r1.yzw + r3.xyz;
   }
-  r1.yzw = log2(r3.xyz);
-  r1.yzw = float3(1.70000005,1.70000005,1.70000005) * r1.yzw;
-  r3.xyz = exp2(r1.yzw);
   if (useFog != 0) {
     r3.w = r3.w * r1.x;
   }
