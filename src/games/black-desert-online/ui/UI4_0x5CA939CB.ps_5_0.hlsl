@@ -117,6 +117,8 @@ void main(
     if (r0.z != 0) discard;
   }
   r1.xyzw = texColor.SampleLevel(PA_LINEAR_CLAMP_FILTER_s, v1.xy, 0).xyzw;
+  // Upgraded sources (menu video) keep negatives that UNORM clamped, log2 below turns them into NaN
+  r1.xyz = max(0, r1.xyz);
   r0.z = texRoseWarFogMap.SampleLevel(PA_POINT_CLAMP_FILTER_s, v1.xy, 0).x;
   r0.z = min(1, r0.z);
   r2.xyz = r1.xyz * r0.zzz;
