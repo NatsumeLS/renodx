@@ -46,9 +46,12 @@ renodx::mods::shader::CustomShaders custom_shaders = {
     CustomShaderEntry(0x6AEF81FE),  // post sharpen / AA -> swapchain
     // DX12 (sm6 / DXIL) passes. sm5 and sm6 hashes differ, so registering both is safe.
     CustomShaderEntry(0x80419ACE),  // tonemap + color grade (gameplay)
-    CustomShaderEntry(0x2FC428AF),  // tonemap + color grade (gameplay variant)
+    CustomShaderEntry(0x1D3AC279),  // tonemap + color grade (gameplay)
+    CustomShaderEntry(0x2FC428AF),  // tonemap + color grade (gameplay variant, pre Isles of Abyss)
     CustomShaderEntry(0xCCAD619A),  // tonemap + color grade (gameplay variant)
-    CustomShaderEntry(0xEC5A7D52),  // tonemap + color grade (menu / inventory)
+    CustomShaderEntry(0x6181A5EB),  // tonemap + color grade (title screen)
+    CustomShaderEntry(0xF69F325C),  // tonemap + color grade (menu / inventory)
+    CustomShaderEntry(0xEC5A7D52),  // tonemap + color grade (menu / inventory, pre Isles of Abyss)
     CustomShaderEntry(0x4506D824),  // tonemap + color grade (menu / inventory variant)
     CustomShaderEntry(0x51731F8B),  // post sharpen / AA -> swapchain
 };
