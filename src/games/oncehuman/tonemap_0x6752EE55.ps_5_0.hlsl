@@ -111,22 +111,7 @@ void main(
   // RENODX: HDR scene tapped here (pre log-shaper / pre-LUT). Channels rotated (B,R,G) -> reorder.
   float3 untonemapped = r0.yzx;
 
-  r0.xyz = float3(-0.0110916002, -0.0110916002, -0.0110916002) + r0.xyz;
-  r0.xyz = r0.xyz * float3(0.5, 0.5, 0.5) + float3(0.0375839993, 0.0375839993, 0.0375839993);
-  r0.xyz = log2(r0.xyz);
-  r0.xyz = saturate(r0.xyz * float3(0.130255386, 0.130255386, 0.130255386) + float3(0.646596014, 0.646596014, 0.646596014));
-  r0.w = 31 * r0.x;
-  r0.w = floor(r0.w);
-  r0.x = r0.x * 31 + -r0.w;
-  r0.yz = r0.yz * float2(0.0302734207, 0.96875) + float2(0.000488280988, 0.015625);
-  r1.x = r0.w * 0.03125 + r0.y;
-  r1.z = -r0.z;
-  r0.yz = float2(0.03125, 1) + r1.xz;
-  r1.y = 1 + r1.z;
-  r1.xyz = ColorGradingLut.Sample(Sampler_Bilinear_Clamp_s, r1.xy).xyz;
-  r0.yzw = ColorGradingLut.Sample(Sampler_Bilinear_Clamp_s, r0.yz).xyz;
-  r0.yzw = r0.yzw + -r1.xyz;
-  r0.xyz = r0.xxx * r0.yzw + r1.xyz;
+  r0.xyz = SampleColorGradingLut(ColorGradingLut, Sampler_Bilinear_Clamp_s, untonemapped);
   r0.w = 1;
   r1.xyzw = Tint.xyzw * r0.xyzw;
   r2.x = dot(r1.xyz, float3(0.212500006, 0.715399981, 0.0720999986));

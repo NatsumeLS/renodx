@@ -70,6 +70,17 @@ cbuffer shader_injection : register(b13) {
 
 #include "../../shaders/renodx.hlsl"
 
+// The game's 1024x32 LUT strip: 32 slices along blue, green flipped, indexed in a log encoding.
+float3 SampleColorGradingLut(Texture2D<float4> lut, SamplerState lut_sampler, float3 color) {
+  float3 encoded = saturate(log2((color - 0.0110916002f) * 0.5f + 0.0375839993f) * 0.130255386f + 0.646596014f);
+  float slice = encoded.b * 31.f;
+  float slice_floor = floor(slice);
+  float2 uv = float2(encoded.r * 0.0302734207f + 0.000488280988f + slice_floor * 0.03125f, 0.984375f - encoded.g * 0.96875f);
+  float3 lower = lut.Sample(lut_sampler, uv).rgb;
+  float3 upper = lut.Sample(lut_sampler, uv + float2(0.03125f, 0.f)).rgb;
+  return lerp(lower, upper, slice - slice_floor);
+}
+
 #endif
 
 #endif  // SRC_GAMES_ONCEHUMAN_SHARED_H_
