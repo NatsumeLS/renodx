@@ -18,6 +18,8 @@
 
 #define DEBUG_LEVEL_0
 
+#include <algorithm>
+
 #include <deps/imgui/imgui.h>
 #include <include/reshade.hpp>
 
@@ -65,6 +67,8 @@ void SyncSwapChainOutput() {
   renodx::mods::swapchain::use_resize_buffer = !is_hdr;
 }
 
+const auto is_intermediate_mode = []() { return current_settings_mode >= 1; };
+
 renodx::utils::settings::Settings settings = {
     new renodx::utils::settings::Setting{
         .key = "SettingsMode",
@@ -88,7 +92,7 @@ renodx::utils::settings::Settings settings = {
         .labels = {"Vanilla", "RenoDRT"},
         // 0 = Vanilla, 3 = RenoDRT (matches is_enabled checks).
         .parse = [](float value) { return value == 0.f ? 0.f : 3.f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     peak_brightness_setting = new renodx::utils::settings::Setting{
         .key = "ToneMapPeakNits",
@@ -130,7 +134,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Tone Mapping",
         .tooltip = "Emulates a display EOTF for the scene.",
         .labels = {"Off", "2.2", "2.4"},
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "SwapChainGammaCorrection",
@@ -142,7 +146,7 @@ renodx::utils::settings::Settings settings = {
         .tooltip = "Gamma correction applied to the UI / swapchain output.",
         .labels = {"None", "2.2", "2.4"},
         .is_enabled = []() { return shader_injection.tone_map_type >= 1; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeExposure",
@@ -154,7 +158,7 @@ renodx::utils::settings::Settings settings = {
         .max = 2.f,
         .format = "%.2f",
         .parse = [](float value) { return value * 2.f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeHighlights",
@@ -164,7 +168,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Color Grading",
         .max = 100.f,
         .parse = [](float value) { return value * 0.02f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeShadows",
@@ -174,7 +178,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Color Grading",
         .max = 100.f,
         .parse = [](float value) { return value * 0.02f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeContrast",
@@ -184,7 +188,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Color Grading",
         .max = 100.f,
         .parse = [](float value) { return value * 0.02f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeSaturation",
@@ -194,7 +198,7 @@ renodx::utils::settings::Settings settings = {
         .section = "Color Grading",
         .max = 100.f,
         .parse = [](float value) { return value * 0.02f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeHighlightSaturation",
@@ -206,7 +210,7 @@ renodx::utils::settings::Settings settings = {
         .max = 100.f,
         .is_enabled = []() { return shader_injection.tone_map_type >= 1; },
         .parse = [](float value) { return value * 0.02f; },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     new renodx::utils::settings::Setting{
         .key = "ColorGradeBlowout",
@@ -292,7 +296,7 @@ renodx::utils::settings::Settings settings = {
             "US CRT",
             "JPN CRT",
         },
-        .is_visible = []() { return current_settings_mode >= 1; },
+        .is_visible = is_intermediate_mode,
     },
     // Output Mode — persisted value loaded in DLL_PROCESS_ATTACH.
     output_mode_setting = new renodx::utils::settings::Setting{
@@ -338,10 +342,10 @@ bool fired_on_init_swapchain = false;
 void OnInitSwapchain(reshade::api::swapchain* swapchain, bool resize) {
   if (fired_on_init_swapchain) return;
   fired_on_init_swapchain = true;
-  float peak_nits = renodx::utils::swapchain::GetPeakNits(swapchain).value_or(1000.f);
-  if (peak_nits < peak_brightness_setting->min) peak_nits = peak_brightness_setting->min;
-  if (peak_nits > peak_brightness_setting->max) peak_nits = peak_brightness_setting->max;
-  peak_brightness_setting->default_value = peak_nits;
+  peak_brightness_setting->default_value = std::clamp(
+      renodx::utils::swapchain::GetPeakNits(swapchain).value_or(1000.f),
+      peak_brightness_setting->min,
+      peak_brightness_setting->max);
 }
 
 }  // namespace
