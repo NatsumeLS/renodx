@@ -79,34 +79,19 @@ float4 main(
   // RENODX: HDR scene tapped here (pre log-shaper / pre-LUT). Plain RGB, no swizzle.
   float3 untonemapped = (_40 * _10.xyz) * _44.x + _49.xyz * shader_injection.bloom_strength;  // RENODX: bloom strength
 
-  float _80 = min(max(((log2((((untonemapped.z + -0.01109160017222166f) * 0.5f) + 0.03758399933576584f)) * 0.13025538623332977f) + 0.6465960144996643f), 0.0f), 1.0f) * 31.0f;
-  float _81 = floor(_80);
-  float _86 = ((min(max(((log2((((untonemapped.x + -0.01109160017222166f) * 0.5f) + 0.03758399933576584f)) * 0.13025538623332977f) + 0.6465960144996643f), 0.0f), 1.0f) * 0.030273420736193657f) + 0.0004882809880655259f) + (_81 * 0.03125f);
-  float _87 = 0.984375f - (min(max(((log2((((untonemapped.y + -0.01109160017222166f) * 0.5f) + 0.03758399933576584f)) * 0.13025538623332977f) + 0.6465960144996643f), 0.0f), 1.0f) * 0.96875f);
-  float _88 = _80 - _81;
-  float4 _90 = ColorGradingLut.Sample(Sampler_Bilinear_Clamp, float2((_86 + 0.03125f), _87));
-  float4 _94 = ColorGradingLut.Sample(Sampler_Bilinear_Clamp, float2(_86, _87));
-  float _112 = (lerp(_94.x, _90.x, _88)) * Tint.x;
-  float _113 = (lerp(_94.y, _90.y, _88)) * Tint.y;
-  float _114 = (lerp(_94.z, _90.z, _88)) * Tint.z;
-  float _115 = Tint.w * _10.w;
-  float _122 = ((_112 * 0.21250000596046448f) + (_113 * 0.715399980545044f)) + (_114 * 0.07209999859333038f);
-  float _131 = ((_122 - _112) * GrayScale) + _112;
-  float _132 = ((_122 - _113) * GrayScale) + _113;
-  float _133 = ((_122 - _114) * GrayScale) + _114;
+  float3 tinted = SampleColorGradingLut(ColorGradingLut, Sampler_Bilinear_Clamp, untonemapped) * Tint.rgb;
+  float luminance = dot(tinted, float3(0.21250000596046448f, 0.715399980545044f, 0.07209999859333038f));
 
   // RENODX: graded SDR look tapped here (linear, before the brightness step and display-gamma encode).
-  float3 graded = float3(_131, _132, _133);
+  float3 graded = lerp(tinted, luminance, GrayScale);
 
   SV_Target.xyz = renodx::draw::RenderIntermediatePass(renodx::draw::ToneMapPass(untonemapped, graded));
-  SV_Target.w = (lerp(_115, _122, GrayScale));
+  SV_Target.w = lerp(Tint.w * _10.w, luminance, GrayScale);
   return SV_Target;
 
   // ---- vanilla output (replaced by ToneMapPass above) ----
   // float _139 = 1.0f / ((BrightnessFactor * 0.7999999523162842f) + 1.7999999523162842f);
   // float _145 = (MinBrightness * 0.03999999910593033f) + -0.019999999552965164f;
   // float _157 = (MaxBrightness * 0.20000004768371582f) + 0.8999999761581421f;
-  // SV_Target.x = exp2(log2(_157 * max((lerp(_131, 1.0f, _145)), 0.0f)) * _139);
-  // SV_Target.y = exp2(log2(_157 * max((lerp(_132, 1.0f, _145)), 0.0f)) * _139);
-  // SV_Target.z = exp2(log2(_157 * max((lerp(_133, 1.0f, _145)), 0.0f)) * _139);
+  // SV_Target.xyz = exp2(log2(_157 * max(lerp(graded, 1.0f, _145), 0.0f)) * _139);
 }
