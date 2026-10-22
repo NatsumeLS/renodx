@@ -28,7 +28,6 @@ struct ShaderInjectData {
 };
 
 #ifndef __cplusplus
-// Injection cbuffer: b13 (DX11) / b13, space50 (DX12).
 #if ((__SHADER_TARGET_MAJOR == 5 && __SHADER_TARGET_MINOR >= 1) || __SHADER_TARGET_MAJOR >= 6)
 cbuffer shader_injection : register(b13, space50) {
 #else

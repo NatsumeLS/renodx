@@ -34,7 +34,6 @@
 
 namespace {
 
-// Custom shader replacements for tonemap / output passes.
 renodx::mods::shader::CustomShaders custom_shaders = {
     // DX11 (sm5 / DXBC) passes.
     CustomShaderEntry(0xFDEF06C9),  // tonemap + color grade (gameplay)
@@ -298,7 +297,7 @@ renodx::utils::settings::Settings settings = {
         },
         .is_visible = is_intermediate_mode,
     },
-    // Output Mode — persisted value loaded in DLL_PROCESS_ATTACH.
+    // No binding: the saved value is loaded in DLL_PROCESS_ATTACH, before the swapchain exists.
     output_mode_setting = new renodx::utils::settings::Setting{
         .key = "OutputMode",
         .value_type = renodx::utils::settings::SettingValueType::INTEGER,
@@ -314,7 +313,6 @@ renodx::utils::settings::Settings settings = {
         .on_change_value = [](float, float) { SyncSwapChainOutput(); },
         .is_global = true,
     },
-    // ---- About ----
     new renodx::utils::settings::Setting{
         .value_type = renodx::utils::settings::SettingValueType::TEXT,
         .label = "RenoDX for Once Human",
@@ -360,7 +358,6 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD fdw_reason, LPVOID lpv_reserved) {
 
       reshade::register_event<reshade::addon_event::init_swapchain>(OnInitSwapchain);
 
-      // Pipeline cloning + injection constant buffer (b13, space50).
       renodx::mods::shader::force_pipeline_cloning = true;
       renodx::mods::shader::expected_constant_buffer_space = 50;
       renodx::mods::shader::expected_constant_buffer_index = 13;
@@ -371,7 +368,6 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD fdw_reason, LPVOID lpv_reserved) {
       renodx::mods::swapchain::use_resource_cloning = true;
       renodx::mods::swapchain::set_color_space = true;
 
-      // Swapchain proxy shaders (dual-target sm5.0/sm5.1 for DX11/DX12).
       renodx::mods::swapchain::swap_chain_proxy_shaders = {
           {
               reshade::api::device_api::d3d11,
@@ -404,7 +400,6 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD fdw_reason, LPVOID lpv_reserved) {
           .usage_include = reshade::api::resource_usage::render_target,
       });
 
-      // Load and apply persisted SDR/HDR choice.
       renodx::utils::settings::LoadSetting(renodx::utils::settings::global_name, output_mode_setting);
       SyncSwapChainOutput();
 
