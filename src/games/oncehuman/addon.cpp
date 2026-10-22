@@ -87,7 +87,7 @@ renodx::utils::settings::Settings settings = {
         .can_reset = true,
         .label = "Tone Mapper",
         .section = "Tone Mapping",
-        .tooltip = "Sets the tone mapper type",
+        .tooltip = "Sets the Tone Mapper Type",
         .labels = {"Vanilla", "RenoDRT"},
         // 0 = Vanilla, 3 = RenoDRT (matches is_enabled checks).
         .parse = [](float value) { return value == 0.f ? 0.f : 3.f; },
@@ -100,7 +100,7 @@ renodx::utils::settings::Settings settings = {
         .can_reset = true,
         .label = "Peak Brightness",
         .section = "Tone Mapping",
-        .tooltip = "Sets the value of peak white in nits. Reset returns to the display's detected peak.",
+        .tooltip = "Sets the Value of Peak White in Nits. Reset returns to the Display's detected Peak.",
         .min = 48.f,
         .max = 4000.f,
     },
@@ -110,7 +110,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 203.f,
         .label = "Game Brightness",
         .section = "Tone Mapping",
-        .tooltip = "Sets the value of 100% white in nits",
+        .tooltip = "Sets the Value of 100% White in Nits",
         .min = 48.f,
         .max = 500.f,
     },
@@ -120,7 +120,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 203.f,
         .label = "UI Brightness",
         .section = "Tone Mapping",
-        .tooltip = "Sets the brightness of UI and HUD elements in nits",
+        .tooltip = "Sets the Brightness of UI and HUD Elements in Nits",
         .min = 48.f,
         .max = 500.f,
     },
@@ -131,7 +131,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 1.f,  // 2.2
         .label = "Scene Gamma Correction",
         .section = "Tone Mapping",
-        .tooltip = "Emulates a display EOTF for the scene.",
+        .tooltip = "Emulates a Display EOTF for the Scene.",
         .labels = {"Off", "2.2", "2.4"},
         .is_visible = is_intermediate_mode,
     },
@@ -142,7 +142,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 1.f,  // 2.2
         .label = "UI Gamma Correction",
         .section = "Tone Mapping",
-        .tooltip = "Gamma correction applied to the UI / swapchain output.",
+        .tooltip = "Gamma Correction applied to the UI / Swapchain Output.",
         .labels = {"None", "2.2", "2.4"},
         .is_enabled = []() { return shader_injection.tone_map_type >= 1; },
         .is_visible = is_intermediate_mode,
@@ -205,7 +205,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 50.f,
         .label = "Highlight Saturation",
         .section = "Color Grading",
-        .tooltip = "Adds or removes highlight color.",
+        .tooltip = "Adds or removes Highlight Color.",
         .max = 100.f,
         .is_enabled = []() { return shader_injection.tone_map_type >= 1; },
         .parse = [](float value) { return value * 0.02f; },
@@ -217,7 +217,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 0.f,
         .label = "Blowout",
         .section = "Color Grading",
-        .tooltip = "Controls highlight desaturation due to overexposure.",
+        .tooltip = "Controls Highlight Desaturation due to Overexposure.",
         .max = 100.f,
         .parse = [](float value) { return value * 0.01f; },
     },
@@ -238,7 +238,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 100.f,
         .label = "Scene Grading",
         .section = "Color Grading",
-        .tooltip = "Scene grading as applied by the game",
+        .tooltip = "Scene Grading as applied by the Game",
         .max = 100.f,
         .is_enabled = []() { return shader_injection.tone_map_type > 0; },
         .parse = [](float value) { return value * 0.01f; },
@@ -249,7 +249,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 100.f,
         .label = "Vignette",
         .section = "Effects",
-        .tooltip = "Strength of the game's vignette (edge darkening).",
+        .tooltip = "Strength of the Game's Vignette (Edge Darkening).",
         .min = 0.f,
         .max = 100.f,
         .parse = [](float value) { return value * 0.01f; },
@@ -260,7 +260,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 100.f,
         .label = "Chromatic Aberration",
         .section = "Effects",
-        .tooltip = "Strength of the game's chromatic aberration (edge color fringing).",
+        .tooltip = "Strength of the Game's Chromatic Aberration (Edge Color Fringing).",
         .min = 0.f,
         .max = 100.f,
         .parse = [](float value) { return value * 0.01f; },
@@ -271,7 +271,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 100.f,
         .label = "Bloom",
         .section = "Effects",
-        .tooltip = "Strength of the game's bloom.",
+        .tooltip = "Strength of the Game's Bloom.",
         .min = 0.f,
         .max = 200.f,
         .parse = [](float value) { return value * 0.01f; },
@@ -283,7 +283,7 @@ renodx::utils::settings::Settings settings = {
         .default_value = 0.f,
         .label = "Custom Color Space",
         .section = "Display Output",
-        .tooltip = "Selects output color space"
+        .tooltip = "Selects Output Color Space"
                    "\nUS Modern for BT.709 D65."
                    "\nJPN Modern for BT.709 D93."
                    "\nUS CRT for BT.601 (NTSC-U)."
@@ -305,10 +305,10 @@ renodx::utils::settings::Settings settings = {
         .can_reset = false,
         .label = "Output Mode",
         .section = "Display Output",
-        .tooltip = "Selects the swapchain output path."
+        .tooltip = "Selects the Swapchain Output Path."
                    "\nSDR: 8-bit sRGB / BT.709."
                    "\nHDR: 10-bit PQ (HDR10) / BT.2020."
-                   "\nSwitching SDR <-> HDR requires a game restart.",
+                   "\nSwitching SDR <-> HDR requires a Game Restart.",
         .labels = {"SDR", "HDR"},
         .on_change_value = [](float, float) { SyncSwapChainOutput(); },
         .is_global = true,
