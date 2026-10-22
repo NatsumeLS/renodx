@@ -3,7 +3,7 @@
 // API: DX12 (sm6)
 //
 // RenoDX Injection Details:
-// - Replaces 0xEC5A7D52 since Isles of Abyss. Same math; the update added the
+// - Replaces 0xEC5A7D52 since Isles of Abyss. Same math. The update added the
 //   MinBrightness/MaxBrightness lift/gain step, dropped with the gamma encode, and grew PerScene.
 // - DXC decompile with the scene composite pulled out so it can be tapped.
 // - Custom effect-strength sliders multiplied in at each effect source.

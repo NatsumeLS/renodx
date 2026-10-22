@@ -36,16 +36,16 @@ namespace {
 
 renodx::mods::shader::CustomShaders custom_shaders = {
     // DX11 (sm5 / DXBC) passes.
-    CustomShaderEntry(0xFDEF06C9),  // tonemap + color grade (gameplay)
-    CustomShaderEntry(0xF25F64CF),  // tonemap + color grade (title screen)
-    CustomShaderEntry(0x6752EE55),  // tonemap + color grade (menu / inventory)
-    CustomShaderEntry(0x25CDDE1D),  // chromatic aberration (gameplay)
-    CustomShaderEntry(0x6AEF81FE),  // post sharpen / AA -> swapchain
+    CustomShaderEntry(0xFDEF06C9),  // Tonemap + color grade (gameplay)
+    CustomShaderEntry(0xF25F64CF),  // Tonemap + color grade (title screen)
+    CustomShaderEntry(0x6752EE55),  // Tonemap + color grade (menu / inventory)
+    CustomShaderEntry(0x25CDDE1D),  // Chromatic aberration (gameplay)
+    CustomShaderEntry(0x6AEF81FE),  // Post sharpen / AA -> swapchain
     // DX12 (sm6 / DXIL) passes. sm5 and sm6 hashes differ, so registering both is safe.
-    CustomShaderEntry(0x1D3AC279),  // tonemap + color grade (gameplay)
-    CustomShaderEntry(0x6181A5EB),  // tonemap + color grade (title screen)
-    CustomShaderEntry(0xF69F325C),  // tonemap + color grade (menu / inventory)
-    CustomShaderEntry(0x51731F8B),  // post sharpen / AA -> swapchain
+    CustomShaderEntry(0x1D3AC279),  // Tonemap + color grade (gameplay)
+    CustomShaderEntry(0x6181A5EB),  // Tonemap + color grade (title screen)
+    CustomShaderEntry(0xF69F325C),  // Tonemap + color grade (menu / inventory)
+    CustomShaderEntry(0x51731F8B),  // Post sharpen / AA -> swapchain
 };
 
 ShaderInjectData shader_injection;
@@ -96,7 +96,7 @@ renodx::utils::settings::Settings settings = {
     peak_brightness_setting = new renodx::utils::settings::Setting{
         .key = "ToneMapPeakNits",
         .binding = &shader_injection.peak_white_nits,
-        .default_value = 1000.f,  // overwritten with detected display peak
+        .default_value = 1000.f,  // Overwritten with the detected display peak
         .can_reset = true,
         .label = "Peak Brightness",
         .section = "Tone Mapping",
@@ -150,7 +150,7 @@ renodx::utils::settings::Settings settings = {
     new renodx::utils::settings::Setting{
         .key = "ColorGradeExposure",
         .binding = &shader_injection.tone_map_exposure,
-        // Baked LUT is dark; parse doubles slider value for +1 stop correction.
+        // Baked LUT is dark, so parse doubles the slider value for a +1 stop correction.
         .default_value = 1.f,
         .label = "Exposure",
         .section = "Color Grading",
@@ -389,7 +389,7 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD fdw_reason, LPVOID lpv_reserved) {
       renodx::mods::swapchain::swap_chain_upgrade_targets.push_back({
           .old_format = reshade::api::format::r8g8b8a8_unorm,
           .new_format = reshade::api::format::r16g16b16a16_float,
-          // View cloning: keeps original r8 for buffer->texture uploads; DX12 crashes without it.
+          // View cloning keeps the original r8 for buffer->texture uploads. DX12 crashes without it.
           .use_resource_view_cloning = true,
           .usage_include = reshade::api::resource_usage::render_target,
       });
